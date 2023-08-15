@@ -1,0 +1,116 @@
+programa Parcial
+procesos
+{________________}
+  proceso juntarF(ES flores:numero) 
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      flores:=flores + 1
+  fin
+{________________}
+  proceso juntarP (ES papeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      papeles:=papeles + 1
+  fin  
+{________________}
+  proceso RecorrerFlores(ES Flores:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av := PosAv
+    ca := PosCa
+    repetir 9
+      juntarF(Flores)
+      mover
+    juntarF(Flores)
+    Pos(av,ca)
+  fin
+{________________}
+  proceso RecorrerPapeles(ES Papeles:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av := PosAv
+    ca := PosCa
+    repetir 9
+      juntarP(Papeles)
+      mover
+    juntarP(Papeles)
+    Pos(av,ca)
+  fin
+{________________}
+areas 
+  area1 : AreaP(5,1,5,10)
+  area2 : AreaP(6,1,6,10)
+  area3 : AreaP(7,1,7,10)
+  areaF : AreaP(1,1,1,1)
+  
+robots
+  robot RECOLECTOR
+  variables
+    Flores, Papeles, id : numero
+    total:numero
+    ok:boolean
+  comenzar
+    total:=0
+    RecibirMensaje(id,RF)
+    RecorrerFlores(Flores)
+
+    EnviarMensaje(id,RF)  
+    RecibirMensaje(ok,RF)
+
+    si(ok)
+      RecorrerPapeles(Papeles)
+      total:=total + Flores + Papeles
+      EnviarMensaje(id,RF) 
+      EnviarMensaje(total,RF)
+  fin
+  
+  robot JEFE
+  variables
+    Flores,Papeles:numero
+    id, max, idMax : numero
+    total:numero
+  comenzar
+    Flores := 0
+    max :=  -999
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    
+    repetir 3 
+      RecibirMensaje(id,*)
+      
+    EnviarMensaje(V,R1)
+    EnviarMensaje(V,R2)
+    EnviarMensaje(V,R3)
+      
+
+    repetir 3
+      RecibirMensaje(id,*)
+      RecibirMensaje(total,*)
+      si total > max
+        max:=total
+        idMax:=id
+    
+    Informar(idMax)
+
+
+  fin
+  
+variables
+  R1,R2,R3 : RECOLECTOR
+  RF : JEFE
+comenzar
+  AsignarArea(R1, area1)
+  AsignarArea(R2, area2)
+  AsignarArea(R3, area3)
+  AsignarArea(RF, areaF)
+  
+  Iniciar(R1,5,1)
+  Iniciar(R2,6,1)
+  Iniciar(R3,7,1)
+  Iniciar(RF,1,1)
+fin

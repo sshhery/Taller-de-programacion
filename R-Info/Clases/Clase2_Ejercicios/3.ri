@@ -1,0 +1,69 @@
+{Ejercicio 3: Implemente el siguiente juego. Existen áreas privadas para cada uno de tres robots delimitadas por las esquinas (2,2) (7,7); (8,2) (13,7); (14,2) (19,7) respectivamente y un robot fiscalizador. 
+
+Cada robot jugador debe tratar de juntar la mayor cantidad de flores posible, para esto tiene tres intentos. En cada intento se posiciona en una esquina determinada al azar (dentro de su área) y junta todas las flores de esa esquina y vuelve a su esquina original. El robot fiscalizador determinará cuántas flores juntaron entre los 3 robots. Los robots se posicionan inicialmente en (2,2), (8,2) y (15,2) y el robot fiscalizador en la esquina (1,1). 
+}
+programa Ejercicio3
+procesos
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flor:= flor + 1
+  fin    
+  proceso Esquinas_Random(ES flor:numero)
+  variables
+    av,ca: numero
+    x,y:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir 3
+      Random(x,0,5)
+      Random(y,0,5)
+      Pos(av+x,ca+y)
+      juntarFlores(flor)
+      {Volver a la esq original}
+      Pos(av,ca)
+  fin
+areas
+  area1: AreaP(2,2,7,7)
+  area2: AreaP(8,2,13,7)
+  area3: AreaP(14,2,19,7)
+  areaJ: AreaP(1,1,1,1)
+robots 
+  robot tipo  
+  variables
+    cantidad:numero  
+  comenzar
+    cantidad:=0
+    Esquinas_Random(cantidad)
+    Informar(cantidad)
+    EnviarMensaje(cantidad,jefe)     
+  fin
+  
+  robot tipoFiscalizador
+  variables
+    cant,total:numero
+  comenzar
+    total:=0
+    repetir 3
+      RecibirMensaje(cant,*)
+      total:=total+cant
+    Informar(total)
+  fin
+  
+variables 
+  robot1:tipo
+  robot2:tipo
+  robot3:tipo
+  jefe:tipoFiscalizador
+comenzar 
+  AsignarArea(robot1,area1)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot3,area3)
+  AsignarArea(jefe,areaJ)
+  Iniciar(robot1,2,2)
+  Iniciar(robot2,8,2)
+  Iniciar(robot3,14,2)
+  Iniciar(jefe,1,1)
+fin
